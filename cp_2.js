@@ -27,3 +27,50 @@ function fetchProductsThen() {
         });
 }
 
+function displayProducts(products) {
+    productContainer.innerHTML = ''; 
+    
+    const productsToDisplay = products.slice(0, 5); 
+    
+    productsToDisplay.forEach(product => {
+        const { id } = product;
+        const { name, price, image } = product.fields;
+        
+        const displayPrice = `$${(price / 100).toFixed(2)}`;
+        
+        const card = document.createElement('div');
+        card.classList.add('product-card');
+        card.dataset.id = id;
+
+        card.innerHTML = `
+            <img src="${image[0].url}" alt="${name}" class="product-image">
+            <h3 class="product-name">${name}</h3>
+            <p class="product-price">${displayPrice}</p>
+        `;
+
+        productContainer.appendChild(card);
+    });
+}
+
+async function fetchProductsAsync() {
+    console.log('--- Fetching Products using async/await ---');
+    
+    try {
+        const response = await fetch(API_URL);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const products = await response.json();
+        
+        console.log('Successfully fetched products with async/await.');
+        
+        displayProducts(products);
+        
+    } catch (error) {
+        handleError(error);
+    }
+}
+fetchProductsThen();
+fetchProductsAsync();
